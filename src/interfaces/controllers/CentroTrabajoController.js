@@ -1,18 +1,18 @@
 class CentroTrabajoController {
     constructor({
-        getAllCentrosTrabajoUseCase,
-        getCentroTrabajoUseCase,
-        getActiveCentrosTrabajoUseCase
+        obtenerTodosCentrosTrabajoUseCase,
+        obtenerCentroTrabajoUseCase,
+        obtenerCentrosTrabajoActivosUseCase
     }) {
-        this.getAllCentrosTrabajoUseCase = getAllCentrosTrabajoUseCase;
-        this.getCentroTrabajoUseCase = getCentroTrabajoUseCase;
-        this.getActiveCentrosTrabajoUseCase = getActiveCentrosTrabajoUseCase;
+        this.obtenerTodosCentrosTrabajoUseCase = obtenerTodosCentrosTrabajoUseCase;
+        this.obtenerCentroTrabajoUseCase = obtenerCentroTrabajoUseCase;
+        this.obtenerCentrosTrabajoActivosUseCase = obtenerCentrosTrabajoActivosUseCase;
     }
 
     async getAllCentrosTrabajo(request, reply) {
         try {
             const filters = request.query;
-            const result = await this.getAllCentrosTrabajoUseCase.execute(filters);
+            const result = await this.obtenerTodosCentrosTrabajoUseCase.execute(filters);
             
             reply.code(200).send({
                 success: true,
@@ -29,7 +29,7 @@ class CentroTrabajoController {
     async getCentroTrabajo(request, reply) {
         try {
             const { id } = request.params;
-            const result = await this.getCentroTrabajoUseCase.execute(id);
+            const result = await this.obtenerCentroTrabajoUseCase.execute(id);
             
             reply.code(200).send({
                 success: true,
@@ -46,7 +46,7 @@ class CentroTrabajoController {
 
     async getActiveCentrosTrabajo(request, reply) {
         try {
-            const result = await this.getActiveCentrosTrabajoUseCase.execute();
+            const result = await this.obtenerCentrosTrabajoActivosUseCase.execute();
             
             reply.code(200).send({
                 success: true,

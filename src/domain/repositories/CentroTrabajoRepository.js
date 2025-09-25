@@ -1,4 +1,4 @@
-// Repository interface for CentroTrabajo operations (read-only)
+// Repository interface for CentroTrabajo operations
 class CentroTrabajoRepository {
     async findAll(filters = {}) {
         throw new Error('Method findAll must be implemented');
@@ -6,10 +6,6 @@ class CentroTrabajoRepository {
 
     async findById(id) {
         throw new Error('Method findById must be implemented');
-    }
-
-    async findByCodigo(codigo) {
-        throw new Error('Method findByCodigo must be implemented');
     }
 
     async findActive() {

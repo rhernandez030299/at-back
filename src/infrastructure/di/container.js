@@ -1,42 +1,43 @@
 // Dependency Injection Container
 const DatabaseConfig = require('../config/database');
-const PostgresEmployeeRepository = require('../repositories/PostgresEmployeeRepository');
-const PostgresAccidentRepository = require('../repositories/PostgresAccidentRepository');
+const PostgresEmpleadoRepository = require('../repositories/PostgresEmpleadoRepository');
 const PostgresCentroTrabajoRepository = require('../repositories/PostgresCentroTrabajoRepository');
 
-// Employee Use Cases
-const CreateEmployeeUseCase = require('../../application/use-cases/CreateEmployeeUseCase');
-const GetEmployeeUseCase = require('../../application/use-cases/GetEmployeeUseCase');
-const GetAllEmployeesUseCase = require('../../application/use-cases/GetAllEmployeesUseCase');
-const UpdateEmployeeUseCase = require('../../application/use-cases/UpdateEmployeeUseCase');
-const DeleteEmployeeUseCase = require('../../application/use-cases/DeleteEmployeeUseCase');
-
-// Accident Use Cases
-const CreateAccidentUseCase = require('../../application/use-cases/CreateAccidentUseCase');
-const GetAccidentUseCase = require('../../application/use-cases/GetAccidentUseCase');
-const GetAllAccidentsUseCase = require('../../application/use-cases/GetAllAccidentsUseCase');
-const UpdateAccidentUseCase = require('../../application/use-cases/UpdateAccidentUseCase');
-const DeleteAccidentUseCase = require('../../application/use-cases/DeleteAccidentUseCase');
-const GetAccidentsByEmployeeUseCase = require('../../application/use-cases/GetAccidentsByEmployeeUseCase');
+// Empleado Use Cases
+const CrearEmpleadoUseCase = require('../../application/use-cases/Empleado/CrearEmpleadoUseCase');
+const ObtenerEmpleadoUseCase = require('../../application/use-cases/Empleado/ObtenerEmpleadoUseCase');
+const ObtenerTodosEmpleadosUseCase = require('../../application/use-cases/Empleado/ObtenerTodosEmpleadosUseCase');
+const ActualizarEmpleadoUseCase = require('../../application/use-cases/Empleado/ActualizarEmpleadoUseCase');
+const EliminarEmpleadoUseCase = require('../../application/use-cases/Empleado/EliminarEmpleadoUseCase');
 
 // Centro de Trabajo Use Cases
-const GetAllCentrosTrabajoUseCase = require('../../application/use-cases/GetAllCentrosTrabajoUseCase');
-const GetCentroTrabajoUseCase = require('../../application/use-cases/GetCentroTrabajoUseCase');
-const GetActiveCentrosTrabajoUseCase = require('../../application/use-cases/GetActiveCentrosTrabajoUseCase');
+const ObtenerTodosCentrosTrabajoUseCase = require('../../application/use-cases/CentroTrabajo/ObtenerTodosCentrosTrabajoUseCase');
+const ObtenerCentroTrabajoUseCase = require('../../application/use-cases/CentroTrabajo/ObtenerCentroTrabajoUseCase');
+const ObtenerCentrosTrabajoActivosUseCase = require('../../application/use-cases/CentroTrabajo/ObtenerCentrosTrabajoActivosUseCase');
+
+// Accidente imports
+const PostgresAccidenteRepository = require('../repositories/PostgresAccidenteRepository');
+const CrearAccidenteUseCase = require('../../application/use-cases/Accidente/CrearAccidenteUseCase');
+const ObtenerAccidenteUseCase = require('../../application/use-cases/Accidente/ObtenerAccidenteUseCase');
+const ObtenerTodosAccidentesUseCase = require('../../application/use-cases/Accidente/ObtenerTodosAccidentesUseCase');
+const ActualizarAccidenteUseCase = require('../../application/use-cases/Accidente/ActualizarAccidenteUseCase');
+const EliminarAccidenteUseCase = require('../../application/use-cases/Accidente/EliminarAccidenteUseCase');
+const ObtenerAccidentesPorEmpleadoUseCase = require('../../application/use-cases/Accidente/ObtenerAccidentesPorEmpleadoUseCase');
+const ObtenerEstadisticasAccidentesUseCase = require('../../application/use-cases/Accidente/ObtenerEstadisticasAccidentesUseCase');
 
 // Departamento and Ciudad imports
 const PostgresDepartamentoRepository = require('../repositories/PostgresDepartamentoRepository');
 const PostgresCiudadRepository = require('../repositories/PostgresCiudadRepository');
-const GetAllDepartamentosUseCase = require('../../application/use-cases/GetAllDepartamentosUseCase');
-const GetDepartamentoUseCase = require('../../application/use-cases/GetDepartamentoUseCase');
-const GetAllCiudadesUseCase = require('../../application/use-cases/GetAllCiudadesUseCase');
-const GetCiudadesByDepartamentoUseCase = require('../../application/use-cases/GetCiudadesByDepartamentoUseCase');
+const ObtenerTodosDepartamentosUseCase = require('../../application/use-cases/Departamento/ObtenerTodosDepartamentosUseCase');
+const ObtenerDepartamentoUseCase = require('../../application/use-cases/Departamento/ObtenerDepartamentoUseCase');
+const ObtenerTodasCiudadesUseCase = require('../../application/use-cases/Ciudad/ObtenerTodasCiudadesUseCase');
+const ObtenerCiudadesPorDepartamentoUseCase = require('../../application/use-cases/Ciudad/ObtenerCiudadesPorDepartamentoUseCase');
 const DepartamentoController = require('../../interfaces/controllers/DepartamentoController');
 const CiudadController = require('../../interfaces/controllers/CiudadController');
 
 // Controllers
-const EmployeeController = require('../../interfaces/controllers/EmployeeController');
-const AccidentController = require('../../interfaces/controllers/AccidentController');
+const EmpleadoController = require('../../interfaces/controllers/EmpleadoController');
+const AccidenteController = require('../../interfaces/controllers/AccidenteController');
 const CentroTrabajoController = require('../../interfaces/controllers/CentroTrabajoController');
 
 class DIContainer {
@@ -50,15 +51,15 @@ class DIContainer {
         await this.dependencies.database.connect();
 
         // Repositories
-        this.dependencies.employeeRepository = new PostgresEmployeeRepository(
-            this.dependencies.database
-        );
-
-        this.dependencies.accidentRepository = new PostgresAccidentRepository(
+        this.dependencies.empleadoRepository = new PostgresEmpleadoRepository(
             this.dependencies.database
         );
 
         this.dependencies.centroTrabajoRepository = new PostgresCentroTrabajoRepository(
+            this.dependencies.database
+        );
+
+        this.dependencies.accidenteRepository = new PostgresAccidenteRepository(
             this.dependencies.database
         );
 
@@ -70,124 +71,129 @@ class DIContainer {
             this.dependencies.database
         );
 
-        // Employee Use Cases
-        this.dependencies.createEmployeeUseCase = new CreateEmployeeUseCase(
-            this.dependencies.employeeRepository,
+        // Empleado Use Cases
+        this.dependencies.crearEmpleadoUseCase = new CrearEmpleadoUseCase(
+            this.dependencies.empleadoRepository,
             this.dependencies.centroTrabajoRepository,
             this.dependencies.ciudadRepository
         );
 
-        this.dependencies.getEmployeeUseCase = new GetEmployeeUseCase(
-            this.dependencies.employeeRepository
+        this.dependencies.obtenerEmpleadoUseCase = new ObtenerEmpleadoUseCase(
+            this.dependencies.empleadoRepository
         );
 
-        this.dependencies.getAllEmployeesUseCase = new GetAllEmployeesUseCase(
-            this.dependencies.employeeRepository
+        this.dependencies.obtenerTodosEmpleadosUseCase = new ObtenerTodosEmpleadosUseCase(
+            this.dependencies.empleadoRepository
         );
 
-        this.dependencies.updateEmployeeUseCase = new UpdateEmployeeUseCase(
-            this.dependencies.employeeRepository,
+        this.dependencies.actualizarEmpleadoUseCase = new ActualizarEmpleadoUseCase(
+            this.dependencies.empleadoRepository,
             this.dependencies.centroTrabajoRepository,
             this.dependencies.ciudadRepository
         );
 
-        this.dependencies.deleteEmployeeUseCase = new DeleteEmployeeUseCase(
-            this.dependencies.employeeRepository
+        this.dependencies.eliminarEmpleadoUseCase = new EliminarEmpleadoUseCase(
+            this.dependencies.empleadoRepository
         );
 
-        // Accident Use Cases
-        this.dependencies.createAccidentUseCase = new CreateAccidentUseCase(
-            this.dependencies.accidentRepository,
-            this.dependencies.employeeRepository
+        // Accidente Use Cases
+        this.dependencies.crearAccidenteUseCase = new CrearAccidenteUseCase(
+            this.dependencies.accidenteRepository,
+            this.dependencies.empleadoRepository
         );
 
-        this.dependencies.getAccidentUseCase = new GetAccidentUseCase(
-            this.dependencies.accidentRepository
+        this.dependencies.obtenerAccidenteUseCase = new ObtenerAccidenteUseCase(
+            this.dependencies.accidenteRepository
         );
 
-        this.dependencies.getAllAccidentsUseCase = new GetAllAccidentsUseCase(
-            this.dependencies.accidentRepository
+        this.dependencies.obtenerTodosAccidentesUseCase = new ObtenerTodosAccidentesUseCase(
+            this.dependencies.accidenteRepository
         );
 
-        this.dependencies.updateAccidentUseCase = new UpdateAccidentUseCase(
-            this.dependencies.accidentRepository,
-            this.dependencies.employeeRepository
+        this.dependencies.actualizarAccidenteUseCase = new ActualizarAccidenteUseCase(
+            this.dependencies.accidenteRepository,
+            this.dependencies.empleadoRepository
         );
 
-        this.dependencies.deleteAccidentUseCase = new DeleteAccidentUseCase(
-            this.dependencies.accidentRepository
+        this.dependencies.eliminarAccidenteUseCase = new EliminarAccidenteUseCase(
+            this.dependencies.accidenteRepository
         );
 
-        this.dependencies.getAccidentsByEmployeeUseCase = new GetAccidentsByEmployeeUseCase(
-            this.dependencies.accidentRepository,
-            this.dependencies.employeeRepository
+        this.dependencies.obtenerAccidentesPorEmpleadoUseCase = new ObtenerAccidentesPorEmpleadoUseCase(
+            this.dependencies.accidenteRepository,
+            this.dependencies.empleadoRepository
+        );
+
+        this.dependencies.obtenerEstadisticasAccidentesUseCase = new ObtenerEstadisticasAccidentesUseCase(
+            this.dependencies.accidenteRepository
         );
 
         // Centro de Trabajo Use Cases
-        this.dependencies.getAllCentrosTrabajoUseCase = new GetAllCentrosTrabajoUseCase(
+        this.dependencies.obtenerTodosCentrosTrabajoUseCase = new ObtenerTodosCentrosTrabajoUseCase(
             this.dependencies.centroTrabajoRepository
         );
 
-        this.dependencies.getCentroTrabajoUseCase = new GetCentroTrabajoUseCase(
+        this.dependencies.obtenerCentroTrabajoUseCase = new ObtenerCentroTrabajoUseCase(
             this.dependencies.centroTrabajoRepository
         );
 
-        this.dependencies.getActiveCentrosTrabajoUseCase = new GetActiveCentrosTrabajoUseCase(
+        this.dependencies.obtenerCentrosTrabajoActivosUseCase = new ObtenerCentrosTrabajoActivosUseCase(
             this.dependencies.centroTrabajoRepository
         );
 
         // Controllers
-        this.dependencies.employeeController = new EmployeeController({
-            createEmployeeUseCase: this.dependencies.createEmployeeUseCase,
-            getEmployeeUseCase: this.dependencies.getEmployeeUseCase,
-            getAllEmployeesUseCase: this.dependencies.getAllEmployeesUseCase,
-            updateEmployeeUseCase: this.dependencies.updateEmployeeUseCase,
-            deleteEmployeeUseCase: this.dependencies.deleteEmployeeUseCase
+        this.dependencies.empleadoController = new EmpleadoController({
+            crearEmpleadoUseCase: this.dependencies.crearEmpleadoUseCase,
+            obtenerEmpleadoUseCase: this.dependencies.obtenerEmpleadoUseCase,
+            obtenerTodosEmpleadosUseCase: this.dependencies.obtenerTodosEmpleadosUseCase,
+            actualizarEmpleadoUseCase: this.dependencies.actualizarEmpleadoUseCase,
+            eliminarEmpleadoUseCase: this.dependencies.eliminarEmpleadoUseCase
         });
 
-        this.dependencies.accidentController = new AccidentController({
-            createAccidentUseCase: this.dependencies.createAccidentUseCase,
-            getAccidentUseCase: this.dependencies.getAccidentUseCase,
-            getAllAccidentsUseCase: this.dependencies.getAllAccidentsUseCase,
-            updateAccidentUseCase: this.dependencies.updateAccidentUseCase,
-            deleteAccidentUseCase: this.dependencies.deleteAccidentUseCase,
-            getAccidentsByEmployeeUseCase: this.dependencies.getAccidentsByEmployeeUseCase
+        this.dependencies.accidenteController = new AccidenteController({
+            crearAccidenteUseCase: this.dependencies.crearAccidenteUseCase,
+            obtenerAccidenteUseCase: this.dependencies.obtenerAccidenteUseCase,
+            obtenerTodosAccidentesUseCase: this.dependencies.obtenerTodosAccidentesUseCase,
+            actualizarAccidenteUseCase: this.dependencies.actualizarAccidenteUseCase,
+            eliminarAccidenteUseCase: this.dependencies.eliminarAccidenteUseCase,
+            obtenerAccidentesPorEmpleadoUseCase: this.dependencies.obtenerAccidentesPorEmpleadoUseCase,
+            obtenerEstadisticasAccidentesUseCase: this.dependencies.obtenerEstadisticasAccidentesUseCase
         });
 
         this.dependencies.centroTrabajoController = new CentroTrabajoController({
-            getAllCentrosTrabajoUseCase: this.dependencies.getAllCentrosTrabajoUseCase,
-            getCentroTrabajoUseCase: this.dependencies.getCentroTrabajoUseCase,
-            getActiveCentrosTrabajoUseCase: this.dependencies.getActiveCentrosTrabajoUseCase
+            obtenerTodosCentrosTrabajoUseCase: this.dependencies.obtenerTodosCentrosTrabajoUseCase,
+            obtenerCentroTrabajoUseCase: this.dependencies.obtenerCentroTrabajoUseCase,
+            obtenerCentrosTrabajoActivosUseCase: this.dependencies.obtenerCentrosTrabajoActivosUseCase
         });
 
         // Departamento Use Cases
-        this.dependencies.getAllDepartamentosUseCase = new GetAllDepartamentosUseCase(
+        this.dependencies.obtenerTodosDepartamentosUseCase = new ObtenerTodosDepartamentosUseCase(
             this.dependencies.departamentoRepository
         );
 
-        this.dependencies.getDepartamentoUseCase = new GetDepartamentoUseCase(
+        this.dependencies.obtenerDepartamentoUseCase = new ObtenerDepartamentoUseCase(
             this.dependencies.departamentoRepository
         );
 
         // Ciudad Use Cases
-        this.dependencies.getAllCiudadesUseCase = new GetAllCiudadesUseCase(
+        this.dependencies.obtenerTodasCiudadesUseCase = new ObtenerTodasCiudadesUseCase(
             this.dependencies.ciudadRepository
         );
 
-        this.dependencies.getCiudadesByDepartamentoUseCase = new GetCiudadesByDepartamentoUseCase(
+        this.dependencies.obtenerCiudadesPorDepartamentoUseCase = new ObtenerCiudadesPorDepartamentoUseCase(
             this.dependencies.ciudadRepository,
             this.dependencies.departamentoRepository
         );
 
         // Departamento and Ciudad Controllers
         this.dependencies.departamentoController = new DepartamentoController(
-            this.dependencies.getAllDepartamentosUseCase,
-            this.dependencies.getDepartamentoUseCase
+            this.dependencies.obtenerTodosDepartamentosUseCase,
+            this.dependencies.obtenerDepartamentoUseCase
         );
 
         this.dependencies.ciudadController = new CiudadController(
-            this.dependencies.getAllCiudadesUseCase,
-            this.dependencies.getCiudadesByDepartamentoUseCase
+            this.dependencies.obtenerTodasCiudadesUseCase,
+            this.dependencies.obtenerCiudadesPorDepartamentoUseCase
         );
 
         console.log('✅ Dependency injection container initialized');

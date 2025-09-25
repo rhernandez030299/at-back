@@ -1,8 +1,8 @@
 const fastify = require('fastify');
 const serverConfig = require('./infrastructure/config/server');
 const DIContainer = require('./infrastructure/di/container');
-const employeeRoutes = require('./interfaces/routes/employeeRoutes');
-const accidentRoutes = require('./interfaces/routes/accidentRoutes');
+const empleadoRoutes = require('./interfaces/routes/empleadoRoutes');
+const accidenteRoutes = require('./interfaces/routes/accidenteRoutes');
 const centroTrabajoRoutes = require('./interfaces/routes/centroTrabajoRoutes');
 const departamentoRoutes = require('./interfaces/routes/departamentoRoutes');
 const ciudadRoutes = require('./interfaces/routes/ciudadRoutes');
@@ -28,30 +28,22 @@ async function createServer() {
         return { 
             status: 'ok', 
             timestamp: new Date().toISOString(),
-            service: 'employee-management-api'
+            service: 'empleado-management-api'
         };
     });
 
     // API info endpoint
     app.get('/api/info', async (request, reply) => {
         return {
-            name: 'Employee Management API',
+            name: 'Empleado Management API',
             version: '1.0.0',
-            description: 'API for managing employee data with Clean Architecture',
+            description: 'API for managing empleado data with Clean Architecture',
             endpoints: {
-                employees: {
-                    'POST /api/employees': 'Create a new employee',
-                    'GET /api/employees': 'Get all employees with optional filters',
-                    'GET /api/employees/:id': 'Get employee by ID',
-                    'DELETE /api/employees/:id': 'Delete employee by ID'
-                },
-                accidents: {
-                    'POST /api/accidents': 'Create a new accident',
-                    'GET /api/accidents': 'Get all accidents with optional filters',
-                    'GET /api/accidents/:id': 'Get accident by ID',
-                    'PUT /api/accidents/:id': 'Update accident by ID',
-                    'DELETE /api/accidents/:id': 'Delete accident by ID',
-                    'GET /api/employees/:employeeId/accidents': 'Get accidents by employee'
+                empleados: {
+                    'POST /api/empleados': 'Create a new empleado',
+                    'GET /api/empleados': 'Get all empleados with optional filters',
+                    'GET /api/empleados/:id': 'Get empleado by ID',
+                    'DELETE /api/empleados/:id': 'Delete empleado by ID'
                 },
                 centrosTrabajo: {
                     'GET /api/centros-trabajo': 'Get all centros de trabajo with optional filters',
@@ -70,7 +62,7 @@ async function createServer() {
             availableFilters: {
                 centroTrabajoId: 'UUID of centro de trabajo (use /api/centros-trabajo/active to get list)',
                 sexo: ['M', 'F'],
-                municipioId: 'UUID of municipio (use /api/ciudades to get list)',
+                ciudadId: 'UUID of ciudad (use /api/ciudades to get list)',
                 minSalario: 'number',
                 maxSalario: 'number',
                 limit: 'number (1-100)',
@@ -79,16 +71,16 @@ async function createServer() {
         };
     });
 
-    // Register employee routes
-    await app.register(employeeRoutes, {
+    // Register empleado routes
+    await app.register(empleadoRoutes, {
         prefix: '/api',
-        employeeController: dependencies.employeeController
+        empleadoController: dependencies.empleadoController
     });
 
-    // Register accident routes
-    await app.register(accidentRoutes, {
+    // Register accidente routes
+    await app.register(accidenteRoutes, {
         prefix: '/api',
-        accidentController: dependencies.accidentController
+        accidenteController: dependencies.accidenteController
     });
 
     // Register centro trabajo routes
@@ -153,11 +145,11 @@ async function start() {
         });
 
         console.log(`
-🚀 Employee Management API is running!
+🚀 Empleado Management API is running!
 📍 Server: http://${serverConfig.host}:${serverConfig.port}
 🏥 Health: http://${serverConfig.host}:${serverConfig.port}/health
 📖 API Info: http://${serverConfig.host}:${serverConfig.port}/api/info
-📚 Employees: http://${serverConfig.host}:${serverConfig.port}/api/employees
+📚 Empleados: http://${serverConfig.host}:${serverConfig.port}/api/empleados
 
 🏗️  Architecture: Clean Architecture with Hexagonal pattern
 💾 Database: PostgreSQL

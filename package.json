@@ -1,7 +1,7 @@
 {
-  "name": "employee-management-api",
+  "name": "empleado-management-api",
   "version": "1.0.0",
-  "description": "Employee management API with Fastify and PostgreSQL using Clean Architecture",
+  "description": "Empleado management API with Fastify and PostgreSQL using Clean Architecture",
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",

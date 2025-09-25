@@ -1,4 +1,4 @@
-# Employee Management API
+# Empleado Management API
 
 A Node.js REST API built with Fastify and PostgreSQL using Clean Architecture and Hexagonal Architecture patterns.
 
@@ -7,7 +7,7 @@ A Node.js REST API built with Fastify and PostgreSQL using Clean Architecture an
 - 🏗️ **Clean Architecture**: Separation of concerns with domain, application, infrastructure, and interface layers
 - 🔧 **Fastify**: High-performance web framework
 - 💾 **PostgreSQL**: Robust database with proper schema design
-- 📝 **CRUD Operations**: Complete employee management functionality
+- 📝 **CRUD Operations**: Complete empleado management functionality
 - 🔍 **Filtering & Pagination**: Advanced query capabilities
 - ✅ **Input Validation**: Request validation with JSON schemas
 - 🚀 **Production Ready**: Error handling, logging, and graceful shutdown
@@ -32,7 +32,7 @@ src/
 └── main.js              # Application entry point
 ```
 
-## Employee Schema
+## Empleado Schema
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -40,7 +40,7 @@ src/
 | nombreYApellidos | String | Full name |
 | documentoNo | String | Document number (unique) |
 | fechaDeNacimiento | Date | Birth date |
-| municipio | String | Municipality |
+| ciudad | String | Municipality |
 | cpt | Enum | Workplace (CPT) |
 | sexo | Enum | Gender (M/F) |
 | salario | Number | Salary |
@@ -77,7 +77,7 @@ src/
 3. **Setup database**:
    ```bash
    # Create database
-   createdb employee_management
+   createdb empleado_management
    
    # Run migrations
    npm run migrate
@@ -100,17 +100,17 @@ src/
 |--------|----------|-------------|
 | GET | `/health` | Health check |
 | GET | `/api/info` | API information |
-| POST | `/api/employees` | Create employee |
-| GET | `/api/employees` | Get all employees |
-| GET | `/api/employees/:id` | Get employee by ID |
-| PUT | `/api/employees/:id` | Update employee |
-| DELETE | `/api/employees/:id` | Delete employee |
+| POST | `/api/empleados` | Create empleado |
+| GET | `/api/empleados` | Get all empleados |
+| GET | `/api/empleados/:id` | Get empleado by ID |
+| PUT | `/api/empleados/:id` | Update empleado |
+| DELETE | `/api/empleados/:id` | Delete empleado |
 
-### Query Parameters (GET /api/employees)
+### Query Parameters (GET /api/empleados)
 
 - `cpt`: Filter by workplace
 - `sexo`: Filter by gender (M/F)
-- `municipio`: Filter by municipality (partial match)
+- `ciudad`: Filter by municipality (partial match)
 - `minSalario`: Minimum salary
 - `maxSalario`: Maximum salary
 - `limit`: Results per page (1-100)
@@ -118,29 +118,29 @@ src/
 
 ### Example Requests
 
-**Create Employee:**
+**Create Empleado:**
 ```bash
-curl -X POST http://localhost:3000/api/employees \
+curl -X POST http://localhost:3000/api/empleados \
   -H "Content-Type: application/json" \
   -d '{
     "nombreYApellidos": "NATALIA MARIA CANO HENAO",
     "documentoNo": "24397738",
     "fechaDeNacimiento": "1981-09-13",
-    "municipio": "CALDAS",
+    "ciudad": "CALDAS",
     "cpt": "FISCALIA_GENERAL_DE_LA_NACION",
     "sexo": "F",
     "salario": 1423500
   }'
 ```
 
-**Get All Employees with Filters:**
+**Get All Empleados with Filters:**
 ```bash
-curl "http://localhost:3000/api/employees?cpt=FISCALIA_GENERAL_DE_LA_NACION&limit=10&offset=0"
+curl "http://localhost:3000/api/empleados?cpt=FISCALIA_GENERAL_DE_LA_NACION&limit=10&offset=0"
 ```
 
-**Update Employee:**
+**Update Empleado:**
 ```bash
-curl -X PUT http://localhost:3000/api/employees/{id} \
+curl -X PUT http://localhost:3000/api/empleados/{id} \
   -H "Content-Type: application/json" \
   -d '{
     "salario": 1500000
@@ -158,7 +158,7 @@ curl -X PUT http://localhost:3000/api/employees/{id} \
     "nombreYApellidos": "NATALIA MARIA CANO HENAO",
     "documentoNo": "24397738",
     "fechaDeNacimiento": "1981-09-13T00:00:00.000Z",
-    "municipio": "CALDAS",
+    "ciudad": "CALDAS",
     "cpt": "FISCALIA_GENERAL_DE_LA_NACION",
     "sexo": "F",
     "salario": 1423500,
@@ -175,7 +175,7 @@ curl -X PUT http://localhost:3000/api/employees/{id} \
 ```json
 {
   "success": false,
-  "error": "Employee with documento 24397738 already exists"
+  "error": "Empleado with documento 24397738 already exists"
 }
 ```
 
@@ -199,7 +199,7 @@ Add new migration:
 # Database
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=employee_management
+DB_NAME=empleado_management
 DB_USER=postgres
 DB_PASSWORD=password
 
