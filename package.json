@@ -1,0 +1,32 @@
+{
+  "name": "employee-management-api",
+  "version": "1.0.0",
+  "description": "Employee management API with Fastify and PostgreSQL using Clean Architecture",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "nodemon src/main.js",
+    "migrate": "node src/infrastructure/database/migrations/run-migrations.js"
+  },
+  "keywords": [
+    "fastify",
+    "postgresql",
+    "clean-architecture",
+    "hexagonal-architecture",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^4.24.3",
+    "@fastify/postgres": "^5.2.2",
+    "@fastify/cors": "^8.4.0",
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1",
+    "yup": "^1.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
