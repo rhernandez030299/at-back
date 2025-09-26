@@ -8,8 +8,6 @@ class Accidente {
         lugarAccidente,
         severidad,
         tipoAccidente,
-        areaId,
-        cargoId,
         turno,
         servicioAPrestar,
         factorRiesgoId,
@@ -38,8 +36,6 @@ class Accidente {
         this.lugarAccidente = lugarAccidente;
         this.severidad = severidad;
         this.tipoAccidente = tipoAccidente;
-        this.areaId = areaId;
-        this.cargoId = cargoId;
         this.turno = turno;
         this.servicioAPrestar = servicioAPrestar;
         this.factorRiesgoId = factorRiesgoId;
@@ -142,10 +138,6 @@ class Accidente {
             severidad: this.severidad,
             nivelSeveridad: this.nivelSeveridad,
             tipoAccidente: this.tipoAccidente,
-            areaId: this.areaId,
-            area: this.area ? this.area.nombre : null,
-            cargoId: this.cargoId,
-            cargo: this.cargo ? this.cargo.nombre : null,
             turno: this.turno,
             servicioAPrestar: this.servicioAPrestar,
             factorRiesgoId: this.factorRiesgoId,
@@ -176,8 +168,6 @@ class Accidente {
         };
 
         // Include full related entities if available
-        if (this.area) json.areaCompleta = this.area;
-        if (this.cargo) json.cargoCompleto = this.cargo;
         if (this.factorRiesgo) json.factorRiesgoCompleto = this.factorRiesgo;
         if (this.tipoLesion) json.tipoLesionCompleta = this.tipoLesion;
         if (this.parteCuerpoAfectada) json.parteCuerpoAfectadaCompleta = this.parteCuerpoAfectada;
@@ -187,12 +177,11 @@ class Accidente {
 
     // Update accident data
     update(data) {
+        if (data.empleadoId !== undefined) this.empleadoId = data.empleadoId;
         if (data.fechaAccidente !== undefined) this.fechaAccidente = data.fechaAccidente;
         if (data.lugarAccidente !== undefined) this.lugarAccidente = data.lugarAccidente;
         if (data.severidad !== undefined) this.severidad = data.severidad;
         if (data.tipoAccidente !== undefined) this.tipoAccidente = data.tipoAccidente;
-        if (data.areaId !== undefined) this.areaId = data.areaId;
-        if (data.cargoId !== undefined) this.cargoId = data.cargoId;
         if (data.turno !== undefined) this.turno = data.turno;
         if (data.servicioAPrestar !== undefined) this.servicioAPrestar = data.servicioAPrestar;
         if (data.factorRiesgoId !== undefined) this.factorRiesgoId = data.factorRiesgoId;

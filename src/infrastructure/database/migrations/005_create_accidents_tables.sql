@@ -4,60 +4,6 @@ CREATE TYPE tipo_accidente AS ENUM ('Propios del trabajo', 'Violencia', 'Tránsi
 
 CREATE TYPE tipo_turno AS ENUM ('Diurno', 'Nocturno');
 
--- Create areas table
-CREATE TABLE areas (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nombre VARCHAR(255) NOT NULL UNIQUE,
-    descripcion TEXT,
-    activo BOOLEAN DEFAULT TRUE,
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Insert default areas
-INSERT INTO areas (nombre, descripcion) VALUES
-    ('Producción', 'Área de producción y manufactura'),
-    ('Administración', 'Área administrativa y oficinas'),
-    ('Mantenimiento', 'Área de mantenimiento y reparaciones'),
-    ('Almacén', 'Área de almacenamiento y logística'),
-    ('Seguridad', 'Área de seguridad y vigilancia'),
-    ('Calidad', 'Área de control de calidad'),
-    ('Recursos Humanos', 'Área de gestión de recursos humanos'),
-    ('Sistemas', 'Área de sistemas y tecnología'),
-    ('Ventas', 'Área comercial y de ventas'),
-    ('Operaciones', 'Área de operaciones generales');
-
--- Create cargos table
-CREATE TABLE cargos (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nombre VARCHAR(255) NOT NULL UNIQUE,
-    descripcion TEXT,
-    area_id UUID REFERENCES areas(id),
-    nivel VARCHAR(50), -- OPERATIVO, TECNICO, PROFESIONAL, DIRECTIVO
-    requiere_capacitacion_especial BOOLEAN DEFAULT FALSE,
-    activo BOOLEAN DEFAULT TRUE,
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Insert default cargos
-INSERT INTO cargos (nombre, descripcion, nivel) VALUES
-    ('Operario de Producción', 'Operario encargado de tareas de producción', 'OPERATIVO'),
-    ('Supervisor de Producción', 'Supervisor del área de producción', 'TECNICO'),
-    ('Técnico de Mantenimiento', 'Técnico especializado en mantenimiento', 'TECNICO'),
-    ('Almacenista', 'Encargado del manejo de almacén', 'OPERATIVO'),
-    ('Conductor', 'Conductor de vehículos de la empresa', 'OPERATIVO'),
-    ('Soldador', 'Especialista en soldadura', 'TECNICO'),
-    ('Electricista', 'Técnico electricista', 'TECNICO'),
-    ('Mecánico', 'Técnico mecánico', 'TECNICO'),
-    ('Operador de Máquina', 'Operador de maquinaria industrial', 'OPERATIVO'),
-    ('Asistente Administrativo', 'Personal de apoyo administrativo', 'PROFESIONAL'),
-    ('Coordinador de Seguridad', 'Encargado de seguridad industrial', 'PROFESIONAL'),
-    ('Analista de Calidad', 'Especialista en control de calidad', 'PROFESIONAL'),
-    ('Jefe de Área', 'Jefe de área operativa', 'DIRECTIVO'),
-    ('Gerente', 'Gerente de división', 'DIRECTIVO'),
-    ('Auxiliar de Servicios', 'Personal de servicios generales', 'OPERATIVO');
-
 -- Create factores_riesgo table
 CREATE TABLE factores_riesgo (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -202,14 +148,14 @@ CREATE TABLE partes_cuerpo (
     lateralidad VARCHAR(20), -- DERECHA, IZQUIERDA, BILATERAL, NO_APLICA
     criticidad VARCHAR(20) DEFAULT 'MEDIA', -- BAJA, MEDIA, ALTA, CRITICA
     requiere_inmovilizacion BOOLEAN DEFAULT FALSE,
-    tiempo_curacion_promedio INTEGER, -- días promedio de curación
+    tiempo_recuperacion_promedio INTEGER, -- días promedio de curación
     activo BOOLEAN DEFAULT TRUE,
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert default partes del cuerpo
-INSERT INTO partes_cuerpo (nombre, descripcion, region_anatomica, lateralidad, criticidad, requiere_inmovilizacion, tiempo_curacion_promedio) VALUES
+INSERT INTO partes_cuerpo (nombre, descripcion, region_anatomica, lateralidad, criticidad, requiere_inmovilizacion, tiempo_recuperacion_promedio) VALUES
     -- Cabeza
     ('Cráneo', 'Huesos que protegen el cerebro', 'SUPERIOR', 'NO_APLICA', 'CRITICA', true, 45),
     ('Cara', 'Región facial incluyendo ojos, nariz, boca', 'SUPERIOR', 'NO_APLICA', 'ALTA', false, 21),
@@ -297,8 +243,6 @@ CREATE TABLE accidentes (
     lugar_accidente VARCHAR(255) NOT NULL,
     severidad tipo_severidad NOT NULL,
     tipo_accidente tipo_accidente NOT NULL,
-    area_id UUID NOT NULL REFERENCES areas(id),
-    cargo_id UUID NOT NULL REFERENCES cargos(id),
     turno tipo_turno NOT NULL,
     servicio_a_prestar VARCHAR(255) NOT NULL,
     factor_riesgo_id UUID NOT NULL REFERENCES factores_riesgo(id),
@@ -382,17 +326,6 @@ CREATE INDEX idx_accidentes_factor_riesgo_id ON accidentes(factor_riesgo_id);
 CREATE INDEX idx_accidentes_tiene_incapacidad ON accidentes(tiene_incapacidad);
 CREATE INDEX idx_accidentes_estado ON accidentes(estado);
 CREATE INDEX idx_accidentes_empleado_ref ON accidentes(empleado_id); -- For joining with empleados table
-CREATE INDEX idx_accidentes_area_id ON accidentes(area_id); -- For joining with areas table
-
-CREATE INDEX idx_areas_nombre ON areas(nombre);
-CREATE INDEX idx_areas_activo ON areas(activo);
-
-CREATE INDEX idx_accidentes_cargo_id ON accidentes(cargo_id); -- For joining with cargos table
-
-CREATE INDEX idx_cargos_nombre ON cargos(nombre);
-CREATE INDEX idx_cargos_activo ON cargos(activo);
-CREATE INDEX idx_cargos_nivel ON cargos(nivel);
-CREATE INDEX idx_cargos_area_id ON cargos(area_id);
 
 CREATE INDEX idx_factores_riesgo_nombre ON factores_riesgo(nombre);
 -- Index removed as categoria field was removed from factores_riesgo
@@ -428,16 +361,6 @@ CREATE TRIGGER actualizar_accidentes_actualizado_en
 
 CREATE TRIGGER actualizar_seguimientos_accidente_actualizado_en 
     BEFORE UPDATE ON seguimientos_accidente 
-    FOR EACH ROW 
-    EXECUTE FUNCTION actualizar_columna_actualizado_en();
-
-CREATE TRIGGER actualizar_areas_actualizado_en 
-    BEFORE UPDATE ON areas 
-    FOR EACH ROW 
-    EXECUTE FUNCTION actualizar_columna_actualizado_en();
-
-CREATE TRIGGER actualizar_cargos_actualizado_en 
-    BEFORE UPDATE ON cargos 
     FOR EACH ROW 
     EXECUTE FUNCTION actualizar_columna_actualizado_en();
 

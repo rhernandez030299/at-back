@@ -5,7 +5,7 @@ const accidenteSchemas = {
             type: 'object',
             required: [
                 'empleadoId', 'fechaAccidente', 'lugarAccidente', 'severidad', 'tipoAccidente',
-                'areaId', 'cargoId', 'turno', 'servicioAPrestar', 'factorRiesgoId',
+                'turno', 'servicioAPrestar', 'factorRiesgoId',
                 'descripcionAccidente', 'tipoLesionId', 'agenteDelAccidente', 
                 'mecanismoDelAccidente', 'parteCuerpoAfectadaId', 'situacionDelAccidente'
             ],
@@ -18,8 +18,6 @@ const accidenteSchemas = {
                     type: 'string', 
                     enum: ['Propios del trabajo', 'Violencia', 'Tránsito', 'Deportivo', 'Recreativo o cultural'] 
                 },
-                areaId: { type: 'string', format: 'uuid' },
-                cargoId: { type: 'string', format: 'uuid' },
                 turno: { type: 'string', enum: ['Diurno', 'Nocturno'] },
                 servicioAPrestar: { type: 'string', minLength: 1, maxLength: 255 },
                 factorRiesgoId: { type: 'string', format: 'uuid' },
@@ -50,6 +48,7 @@ const accidenteSchemas = {
         body: {
             type: 'object',
             properties: {
+                empleadoId: { type: 'string', format: 'uuid' },
                 fechaAccidente: { type: 'string', format: 'date-time' },
                 lugarAccidente: { type: 'string', minLength: 1, maxLength: 255 },
                 severidad: { type: 'string', enum: ['Leve', 'Severo', 'Grave', 'Mortal'] },
@@ -57,8 +56,6 @@ const accidenteSchemas = {
                     type: 'string', 
                     enum: ['Propios del trabajo', 'Violencia', 'Tránsito', 'Deportivo', 'Recreativo o cultural'] 
                 },
-                areaId: { type: 'string', format: 'uuid' },
-                cargoId: { type: 'string', format: 'uuid' },
                 turno: { type: 'string', enum: ['Diurno', 'Nocturno'] },
                 servicioAPrestar: { type: 'string', minLength: 1, maxLength: 255 },
                 factorRiesgoId: { type: 'string', format: 'uuid' },
@@ -69,13 +66,13 @@ const accidenteSchemas = {
                 parteCuerpoAfectadaId: { type: 'string', format: 'uuid' },
                 situacionDelAccidente: { type: 'string', minLength: 10, maxLength: 2000 },
                 tieneIncapacidad: { type: 'boolean' },
-                fechaInicioIncapacidad: { type: 'string', format: 'date', nullable: true },
-                fechaFinIncapacidad: { type: 'string', format: 'date', nullable: true },
+                fechaInicioIncapacidad: { type: 'string', format: 'date-time', nullable: true },
+                fechaFinIncapacidad: { type: 'string', format: 'date-time', nullable: true },
                 diasIncapacidad: { type: 'integer', minimum: 0, maximum: 365 },
-                fechaInvestigacion: { type: 'string', format: 'date', nullable: true },
+                fechaInvestigacion: { type: 'string', format: 'date-time', nullable: true },
                 descripcionInvestigacion: { type: 'string', maxLength: 2000, nullable: true },
-                fechaEjecucionAcciones: { type: 'string', format: 'date', nullable: true },
-                fechaVerificacionAcciones: { type: 'string', format: 'date', nullable: true },
+                fechaEjecucionAcciones: { type: 'string', format: 'date-time', nullable: true },
+                fechaVerificacionAcciones: { type: 'string', format: 'date-time', nullable: true },
                 estado: { type: 'string', enum: ['ABIERTO', 'EN_INVESTIGACION', 'CERRADO'] },
                 requiereSeguimiento: { type: 'boolean' }
             }
@@ -112,11 +109,10 @@ const accidenteSchemas = {
                     type: 'string', 
                     enum: ['Propios del trabajo', 'Violencia', 'Tránsito', 'Deportivo', 'Recreativo o cultural'] 
                 },
-                areaId: { type: 'string', format: 'uuid' },
                 estado: { type: 'string', enum: ['ABIERTO', 'EN_INVESTIGACION', 'CERRADO'] },
                 tieneIncapacidad: { type: 'boolean' },
-                fechaDesde: { type: 'string', format: 'date' },
-                fechaHasta: { type: 'string', format: 'date' },
+                fechaDesde: { type: 'string', format: 'date-time' },
+                fechaHasta: { type: 'string', format: 'date-time' },
                 limit: { type: 'integer', minimum: 1, maximum: 100 },
                 offset: { type: 'integer', minimum: 0 }
             }

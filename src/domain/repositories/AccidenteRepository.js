@@ -41,10 +41,6 @@ class AccidenteRepository {
         throw new Error('Method getAccidentsBySeverity must be implemented');
     }
 
-    async getAccidentsByArea() {
-        throw new Error('Method getAccidentsByArea must be implemented');
-    }
-
     async getAccidentsByTipoLesion() {
         throw new Error('Method getAccidentsByTipoLesion must be implemented');
     }

@@ -11,11 +11,12 @@ class PostgresAccidenteRepository extends AccidenteRepository {
         const query = `
             INSERT INTO accidentes (
                 id, empleado_id, fecha_accidente, lugar_accidente, severidad, tipo_accidente,
-                area_id, cargo_id, turno, servicio_a_prestar, factor_riesgo_id, descripcion_accidente,
+                turno, servicio_a_prestar, factor_riesgo_id, descripcion_accidente,
                 tipo_lesion_id, agente_del_accidente, mecanismo_del_accidente, parte_cuerpo_afectada_id,
                 situacion_del_accidente, tiene_incapacidad, fecha_inicio_incapacidad, fecha_fin_incapacidad,
-                dias_incapacidad, estado, requiere_seguimiento
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
+                dias_incapacidad, fecha_investigacion, descripcion_investigacion, fecha_ejecucion_acciones,
+                fecha_verificacion_acciones, estado, requiere_seguimiento
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
             RETURNING *
         `;
 
@@ -26,8 +27,6 @@ class PostgresAccidenteRepository extends AccidenteRepository {
             accidente.lugarAccidente,
             accidente.severidad,
             accidente.tipoAccidente,
-            accidente.areaId,
-            accidente.cargoId,
             accidente.turno,
             accidente.servicioAPrestar,
             accidente.factorRiesgoId,
@@ -41,6 +40,10 @@ class PostgresAccidenteRepository extends AccidenteRepository {
             accidente.fechaInicioIncapacidad,
             accidente.fechaFinIncapacidad,
             accidente.diasIncapacidad,
+            accidente.fechaInvestigacion,
+            accidente.descripcionInvestigacion,
+            accidente.fechaEjecucionAcciones,
+            accidente.fechaVerificacionAcciones,
             accidente.estado,
             accidente.requiereSeguimiento
         ];
@@ -61,10 +64,6 @@ class PostgresAccidenteRepository extends AccidenteRepository {
                 e.nombres as empleado_nombres,
                 e.apellidos as empleado_apellidos,
                 e.numero_documento as empleado_numero_documento,
-                ar.nombre as area_nombre,
-                ar.descripcion as area_descripcion,
-                c.nombre as cargo_nombre,
-                c.descripcion as cargo_descripcion,
                 fr.nombre as factor_riesgo_nombre,
                 fr.descripcion as factor_riesgo_descripcion,
                 tl.nombre as tipo_lesion_nombre,
@@ -73,8 +72,6 @@ class PostgresAccidenteRepository extends AccidenteRepository {
                 pc.descripcion as parte_cuerpo_descripcion
             FROM accidentes a
             LEFT JOIN empleados e ON a.empleado_id = e.id
-            LEFT JOIN areas ar ON a.area_id = ar.id
-            LEFT JOIN cargos c ON a.cargo_id = c.id
             LEFT JOIN factores_riesgo fr ON a.factor_riesgo_id = fr.id
             LEFT JOIN tipos_lesion tl ON a.tipo_lesion_id = tl.id
             LEFT JOIN partes_cuerpo pc ON a.parte_cuerpo_afectada_id = pc.id
@@ -97,15 +94,11 @@ class PostgresAccidenteRepository extends AccidenteRepository {
                 e.nombres as empleado_nombres,
                 e.apellidos as empleado_apellidos,
                 e.numero_documento as empleado_numero_documento,
-                ar.nombre as area_nombre,
-                c.nombre as cargo_nombre,
                 fr.nombre as factor_riesgo_nombre,
                 tl.nombre as tipo_lesion_nombre,
                 pc.nombre as parte_cuerpo_nombre
             FROM accidentes a
             LEFT JOIN empleados e ON a.empleado_id = e.id
-            LEFT JOIN areas ar ON a.area_id = ar.id
-            LEFT JOIN cargos c ON a.cargo_id = c.id
             LEFT JOIN factores_riesgo fr ON a.factor_riesgo_id = fr.id
             LEFT JOIN tipos_lesion tl ON a.tipo_lesion_id = tl.id
             LEFT JOIN partes_cuerpo pc ON a.parte_cuerpo_afectada_id = pc.id
@@ -124,15 +117,11 @@ class PostgresAccidenteRepository extends AccidenteRepository {
                 e.nombres as empleado_nombres,
                 e.apellidos as empleado_apellidos,
                 e.numero_documento as empleado_numero_documento,
-                ar.nombre as area_nombre,
-                c.nombre as cargo_nombre,
                 fr.nombre as factor_riesgo_nombre,
                 tl.nombre as tipo_lesion_nombre,
                 pc.nombre as parte_cuerpo_nombre
             FROM accidentes a
             LEFT JOIN empleados e ON a.empleado_id = e.id
-            LEFT JOIN areas ar ON a.area_id = ar.id
-            LEFT JOIN cargos c ON a.cargo_id = c.id
             LEFT JOIN factores_riesgo fr ON a.factor_riesgo_id = fr.id
             LEFT JOIN tipos_lesion tl ON a.tipo_lesion_id = tl.id
             LEFT JOIN partes_cuerpo pc ON a.parte_cuerpo_afectada_id = pc.id
@@ -158,12 +147,6 @@ class PostgresAccidenteRepository extends AccidenteRepository {
         if (filters.tipoAccidente) {
             query += ` AND a.tipo_accidente = $${paramCount}`;
             values.push(filters.tipoAccidente);
-            paramCount++;
-        }
-
-        if (filters.areaId) {
-            query += ` AND a.area_id = $${paramCount}`;
-            values.push(filters.areaId);
             paramCount++;
         }
 
@@ -222,31 +205,30 @@ class PostgresAccidenteRepository extends AccidenteRepository {
 
         const query = `
             UPDATE accidentes SET
-                fecha_accidente = $2,
-                lugar_accidente = $3,
-                severidad = $4,
-                tipo_accidente = $5,
-                area_id = $6,
-                cargo_id = $7,
-                turno = $8,
-                servicio_a_prestar = $9,
-                factor_riesgo_id = $10,
-                descripcion_accidente = $11,
-                tipo_lesion_id = $12,
-                agente_del_accidente = $13,
-                mecanismo_del_accidente = $14,
-                parte_cuerpo_afectada_id = $15,
-                situacion_del_accidente = $16,
-                tiene_incapacidad = $17,
-                fecha_inicio_incapacidad = $18,
-                fecha_fin_incapacidad = $19,
-                dias_incapacidad = $20,
-                fecha_investigacion = $21,
-                descripcion_investigacion = $22,
-                fecha_ejecucion_acciones = $23,
-                fecha_verificacion_acciones = $24,
-                estado = $25,
-                requiere_seguimiento = $26,
+                empleado_id = $2,
+                fecha_accidente = $3,
+                lugar_accidente = $4,
+                severidad = $5,
+                tipo_accidente = $6,
+                turno = $7,
+                servicio_a_prestar = $8,
+                factor_riesgo_id = $9,
+                descripcion_accidente = $10,
+                tipo_lesion_id = $11,
+                agente_del_accidente = $12,
+                mecanismo_del_accidente = $13,
+                parte_cuerpo_afectada_id = $14,
+                situacion_del_accidente = $15,
+                tiene_incapacidad = $16,
+                fecha_inicio_incapacidad = $17,
+                fecha_fin_incapacidad = $18,
+                dias_incapacidad = $19,
+                fecha_investigacion = $20,
+                descripcion_investigacion = $21,
+                fecha_ejecucion_acciones = $22,
+                fecha_verificacion_acciones = $23,
+                estado = $24,
+                requiere_seguimiento = $25,
                 actualizado_en = CURRENT_TIMESTAMP
             WHERE id = $1
             RETURNING *
@@ -254,12 +236,11 @@ class PostgresAccidenteRepository extends AccidenteRepository {
 
         const values = [
             id,
+            existingAccidente.empleadoId,
             existingAccidente.fechaAccidente,
             existingAccidente.lugarAccidente,
             existingAccidente.severidad,
             existingAccidente.tipoAccidente,
-            existingAccidente.areaId,
-            existingAccidente.cargoId,
             existingAccidente.turno,
             existingAccidente.servicioAPrestar,
             existingAccidente.factorRiesgoId,
@@ -283,7 +264,8 @@ class PostgresAccidenteRepository extends AccidenteRepository {
 
         try {
             const result = await this.db.query(query, values);
-            return this._mapRowToAccidente(result.rows[0]);
+            // Return the updated accidente with all related information
+            return await this.findById(id);
         } catch (error) {
             console.error('Error updating accidente:', error);
             throw error;
@@ -333,12 +315,6 @@ class PostgresAccidenteRepository extends AccidenteRepository {
         if (filters.tipoAccidente) {
             query += ` AND a.tipo_accidente = $${paramCount}`;
             values.push(filters.tipoAccidente);
-            paramCount++;
-        }
-
-        if (filters.areaId) {
-            query += ` AND a.area_id = $${paramCount}`;
-            values.push(filters.areaId);
             paramCount++;
         }
 
@@ -409,22 +385,6 @@ class PostgresAccidenteRepository extends AccidenteRepository {
         return result.rows;
     }
 
-    async getAccidentsByArea() {
-        const query = `
-            SELECT 
-                ar.nombre as area,
-                COUNT(*) as total,
-                ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 2) as porcentaje
-            FROM accidentes a
-            LEFT JOIN areas ar ON a.area_id = ar.id
-            GROUP BY ar.nombre
-            ORDER BY total DESC
-        `;
-        
-        const result = await this.db.query(query);
-        return result.rows;
-    }
-
     async getAccidentsByTipoLesion() {
         const query = `
             SELECT 
@@ -450,8 +410,6 @@ class PostgresAccidenteRepository extends AccidenteRepository {
             lugarAccidente: row.lugar_accidente,
             severidad: row.severidad,
             tipoAccidente: row.tipo_accidente,
-            areaId: row.area_id,
-            cargoId: row.cargo_id,
             turno: row.turno,
             servicioAPrestar: row.servicio_a_prestar,
             factorRiesgoId: row.factor_riesgo_id,
@@ -486,19 +444,6 @@ class PostgresAccidenteRepository extends AccidenteRepository {
         }
 
         // Add related entities if available
-        if (row.area_nombre) {
-            accidente.area = {
-                nombre: row.area_nombre,
-                descripcion: row.area_descripcion
-            };
-        }
-
-        if (row.cargo_nombre) {
-            accidente.cargo = {
-                nombre: row.cargo_nombre,
-                descripcion: row.cargo_descripcion
-            };
-        }
 
         if (row.factor_riesgo_nombre) {
             accidente.factorRiesgo = {

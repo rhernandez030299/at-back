@@ -7,6 +7,12 @@ const centroTrabajoRoutes = require('./interfaces/routes/centroTrabajoRoutes');
 const departamentoRoutes = require('./interfaces/routes/departamentoRoutes');
 const ciudadRoutes = require('./interfaces/routes/ciudadRoutes');
 
+// New routes for accident-related entities
+const factorRiesgoRoutes = require('./interfaces/routes/factorRiesgoRoutes');
+const tipoLesionRoutes = require('./interfaces/routes/tipoLesionRoutes');
+const parteCuerpoRoutes = require('./interfaces/routes/parteCuerpoRoutes');
+const seguimientoAccidenteRoutes = require('./interfaces/routes/seguimientoAccidenteRoutes');
+
 async function createServer() {
     // Create Fastify instance
     const app = fastify({
@@ -99,6 +105,27 @@ async function createServer() {
     await app.register(ciudadRoutes, {
         prefix: '/api',
         ciudadController: dependencies.ciudadController
+    });
+
+    // Register new routes for accident-related entities
+    await app.register(factorRiesgoRoutes, {
+        prefix: '/api',
+        factorRiesgoController: dependencies.factorRiesgoController
+    });
+
+    await app.register(tipoLesionRoutes, {
+        prefix: '/api',
+        tipoLesionController: dependencies.tipoLesionController
+    });
+
+    await app.register(parteCuerpoRoutes, {
+        prefix: '/api',
+        parteCuerpoController: dependencies.parteCuerpoController
+    });
+
+    await app.register(seguimientoAccidenteRoutes, {
+        prefix: '/api',
+        seguimientoAccidenteController: dependencies.seguimientoAccidenteController
     });
 
     // Global error handler

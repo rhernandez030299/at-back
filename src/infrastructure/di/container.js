@@ -3,6 +3,12 @@ const DatabaseConfig = require('../config/database');
 const PostgresEmpleadoRepository = require('../repositories/PostgresEmpleadoRepository');
 const PostgresCentroTrabajoRepository = require('../repositories/PostgresCentroTrabajoRepository');
 
+// New repositories for accident-related entities
+const PostgresFactorRiesgoRepository = require('../repositories/PostgresFactorRiesgoRepository');
+const PostgresTipoLesionRepository = require('../repositories/PostgresTipoLesionRepository');
+const PostgresParteCuerpoRepository = require('../repositories/PostgresParteCuerpoRepository');
+const PostgresSeguimientoAccidenteRepository = require('../repositories/PostgresSeguimientoAccidenteRepository');
+
 // Empleado Use Cases
 const CrearEmpleadoUseCase = require('../../application/use-cases/Empleado/CrearEmpleadoUseCase');
 const ObtenerEmpleadoUseCase = require('../../application/use-cases/Empleado/ObtenerEmpleadoUseCase');
@@ -35,10 +41,33 @@ const ObtenerCiudadesPorDepartamentoUseCase = require('../../application/use-cas
 const DepartamentoController = require('../../interfaces/controllers/DepartamentoController');
 const CiudadController = require('../../interfaces/controllers/CiudadController');
 
+// New Use Cases for accident-related entities
+const ObtenerTodosFactoresRiesgoUseCase = require('../../application/use-cases/FactorRiesgo/ObtenerTodosFactoresRiesgoUseCase');
+const ObtenerFactoresRiesgoActivosUseCase = require('../../application/use-cases/FactorRiesgo/ObtenerFactoresRiesgoActivosUseCase');
+const ObtenerTodosTiposLesionUseCase = require('../../application/use-cases/TipoLesion/ObtenerTodosTiposLesionUseCase');
+const ObtenerTiposLesionActivosUseCase = require('../../application/use-cases/TipoLesion/ObtenerTiposLesionActivosUseCase');
+const ObtenerTodasPartesCuerpoUseCase = require('../../application/use-cases/ParteCuerpo/ObtenerTodasPartesCuerpoUseCase');
+const ObtenerPartesCuerpoActivasUseCase = require('../../application/use-cases/ParteCuerpo/ObtenerPartesCuerpoActivasUseCase');
+
+// SeguimientoAccidente Use Cases
+const CrearSeguimientoAccidenteUseCase = require('../../application/use-cases/SeguimientoAccidente/CrearSeguimientoAccidenteUseCase');
+const ObtenerSeguimientoAccidenteUseCase = require('../../application/use-cases/SeguimientoAccidente/ObtenerSeguimientoAccidenteUseCase');
+const ObtenerSeguimientosAccidenteUseCase = require('../../application/use-cases/SeguimientoAccidente/ObtenerSeguimientosAccidenteUseCase');
+const ObtenerSeguimientosPorAccidenteUseCase = require('../../application/use-cases/SeguimientoAccidente/ObtenerSeguimientosPorAccidenteUseCase');
+const ActualizarSeguimientoAccidenteUseCase = require('../../application/use-cases/SeguimientoAccidente/ActualizarSeguimientoAccidenteUseCase');
+const EliminarSeguimientoAccidenteUseCase = require('../../application/use-cases/SeguimientoAccidente/EliminarSeguimientoAccidenteUseCase');
+const ObtenerSeguimientosVencidosUseCase = require('../../application/use-cases/SeguimientoAccidente/ObtenerSeguimientosVencidosUseCase');
+
 // Controllers
 const EmpleadoController = require('../../interfaces/controllers/EmpleadoController');
 const AccidenteController = require('../../interfaces/controllers/AccidenteController');
 const CentroTrabajoController = require('../../interfaces/controllers/CentroTrabajoController');
+
+// New Controllers for accident-related entities
+const FactorRiesgoController = require('../../interfaces/controllers/FactorRiesgoController');
+const TipoLesionController = require('../../interfaces/controllers/TipoLesionController');
+const ParteCuerpoController = require('../../interfaces/controllers/ParteCuerpoController');
+const SeguimientoAccidenteController = require('../../interfaces/controllers/SeguimientoAccidenteController');
 
 class DIContainer {
     constructor() {
@@ -68,6 +97,23 @@ class DIContainer {
         );
 
         this.dependencies.ciudadRepository = new PostgresCiudadRepository(
+            this.dependencies.database
+        );
+
+        // New repositories for accident-related entities
+        this.dependencies.factorRiesgoRepository = new PostgresFactorRiesgoRepository(
+            this.dependencies.database
+        );
+
+        this.dependencies.tipoLesionRepository = new PostgresTipoLesionRepository(
+            this.dependencies.database
+        );
+
+        this.dependencies.parteCuerpoRepository = new PostgresParteCuerpoRepository(
+            this.dependencies.database
+        );
+
+        this.dependencies.seguimientoAccidenteRepository = new PostgresSeguimientoAccidenteRepository(
             this.dependencies.database
         );
 
@@ -141,6 +187,62 @@ class DIContainer {
             this.dependencies.centroTrabajoRepository
         );
 
+        // New Use Cases for accident-related entities
+        this.dependencies.obtenerTodosFactoresRiesgoUseCase = new ObtenerTodosFactoresRiesgoUseCase(
+            this.dependencies.factorRiesgoRepository
+        );
+
+        this.dependencies.obtenerFactoresRiesgoActivosUseCase = new ObtenerFactoresRiesgoActivosUseCase(
+            this.dependencies.factorRiesgoRepository
+        );
+
+        this.dependencies.obtenerTodosTiposLesionUseCase = new ObtenerTodosTiposLesionUseCase(
+            this.dependencies.tipoLesionRepository
+        );
+
+        this.dependencies.obtenerTiposLesionActivosUseCase = new ObtenerTiposLesionActivosUseCase(
+            this.dependencies.tipoLesionRepository
+        );
+
+        this.dependencies.obtenerTodasPartesCuerpoUseCase = new ObtenerTodasPartesCuerpoUseCase(
+            this.dependencies.parteCuerpoRepository
+        );
+
+        this.dependencies.obtenerPartesCuerpoActivasUseCase = new ObtenerPartesCuerpoActivasUseCase(
+            this.dependencies.parteCuerpoRepository
+        );
+
+        // SeguimientoAccidente Use Cases
+        this.dependencies.crearSeguimientoAccidenteUseCase = new CrearSeguimientoAccidenteUseCase(
+            this.dependencies.seguimientoAccidenteRepository,
+            this.dependencies.accidenteRepository
+        );
+
+        this.dependencies.obtenerSeguimientoAccidenteUseCase = new ObtenerSeguimientoAccidenteUseCase(
+            this.dependencies.seguimientoAccidenteRepository
+        );
+
+        this.dependencies.obtenerSeguimientosAccidenteUseCase = new ObtenerSeguimientosAccidenteUseCase(
+            this.dependencies.seguimientoAccidenteRepository
+        );
+
+        this.dependencies.obtenerSeguimientosPorAccidenteUseCase = new ObtenerSeguimientosPorAccidenteUseCase(
+            this.dependencies.seguimientoAccidenteRepository,
+            this.dependencies.accidenteRepository
+        );
+
+        this.dependencies.actualizarSeguimientoAccidenteUseCase = new ActualizarSeguimientoAccidenteUseCase(
+            this.dependencies.seguimientoAccidenteRepository
+        );
+
+        this.dependencies.eliminarSeguimientoAccidenteUseCase = new EliminarSeguimientoAccidenteUseCase(
+            this.dependencies.seguimientoAccidenteRepository
+        );
+
+        this.dependencies.obtenerSeguimientosVencidosUseCase = new ObtenerSeguimientosVencidosUseCase(
+            this.dependencies.seguimientoAccidenteRepository
+        );
+
         // Controllers
         this.dependencies.empleadoController = new EmpleadoController({
             crearEmpleadoUseCase: this.dependencies.crearEmpleadoUseCase,
@@ -195,6 +297,32 @@ class DIContainer {
             this.dependencies.obtenerTodasCiudadesUseCase,
             this.dependencies.obtenerCiudadesPorDepartamentoUseCase
         );
+
+        // New Controllers for accident-related entities
+        this.dependencies.factorRiesgoController = new FactorRiesgoController({
+            obtenerTodosFactoresRiesgoUseCase: this.dependencies.obtenerTodosFactoresRiesgoUseCase,
+            obtenerFactoresRiesgoActivosUseCase: this.dependencies.obtenerFactoresRiesgoActivosUseCase
+        });
+
+        this.dependencies.tipoLesionController = new TipoLesionController({
+            obtenerTodosTiposLesionUseCase: this.dependencies.obtenerTodosTiposLesionUseCase,
+            obtenerTiposLesionActivosUseCase: this.dependencies.obtenerTiposLesionActivosUseCase
+        });
+
+        this.dependencies.parteCuerpoController = new ParteCuerpoController({
+            obtenerTodasPartesCuerpoUseCase: this.dependencies.obtenerTodasPartesCuerpoUseCase,
+            obtenerPartesCuerpoActivasUseCase: this.dependencies.obtenerPartesCuerpoActivasUseCase
+        });
+
+        this.dependencies.seguimientoAccidenteController = new SeguimientoAccidenteController({
+            crearSeguimientoAccidenteUseCase: this.dependencies.crearSeguimientoAccidenteUseCase,
+            obtenerSeguimientoAccidenteUseCase: this.dependencies.obtenerSeguimientoAccidenteUseCase,
+            obtenerSeguimientosAccidenteUseCase: this.dependencies.obtenerSeguimientosAccidenteUseCase,
+            obtenerSeguimientosPorAccidenteUseCase: this.dependencies.obtenerSeguimientosPorAccidenteUseCase,
+            actualizarSeguimientoAccidenteUseCase: this.dependencies.actualizarSeguimientoAccidenteUseCase,
+            eliminarSeguimientoAccidenteUseCase: this.dependencies.eliminarSeguimientoAccidenteUseCase,
+            obtenerSeguimientosVencidosUseCase: this.dependencies.obtenerSeguimientosVencidosUseCase
+        });
 
         console.log('✅ Dependency injection container initialized');
         return this.dependencies;

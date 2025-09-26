@@ -16,12 +16,10 @@ class ObtenerEstadisticasAccidentesUseCase {
             const [
                 accidentesPorMes,
                 accidentesPorSeveridad,
-                accidentesPorArea,
                 accidentesPorTipoLesion
             ] = await Promise.all([
                 this.accidenteRepository.getAccidentsByMonth(year),
                 this.accidenteRepository.getAccidentsBySeverity(),
-                this.accidenteRepository.getAccidentsByArea(),
                 this.accidenteRepository.getAccidentsByTipoLesion()
             ]);
 
@@ -59,11 +57,6 @@ class ObtenerEstadisticasAccidentesUseCase {
                     severidad: sev.severidad,
                     total: parseInt(sev.total),
                     porcentaje: parseFloat(sev.porcentaje)
-                })),
-                accidentesPorArea: accidentesPorArea.map(area => ({
-                    area: area.area,
-                    total: parseInt(area.total),
-                    porcentaje: parseFloat(area.porcentaje)
                 })),
                 accidentesPorTipoLesion: accidentesPorTipoLesion.slice(0, 10).map(tipo => ({
                     tipoLesion: tipo.tipo_lesion,

@@ -34,17 +34,7 @@ const createAccidenteSchema = yup.object().shape({
         .string()
         .required('tipoAccidente is required')
         .oneOf(VALID_TIPOS_ACCIDENTE, `tipoAccidente must be one of: ${VALID_TIPOS_ACCIDENTE.join(', ')}`),
-    
-    areaId: yup
-        .string()
-        .required('areaId is required')
-        .uuid('areaId must be a valid UUID'),
-    
-    cargoId: yup
-        .string()
-        .required('cargoId is required')
-        .uuid('cargoId must be a valid UUID'),
-    
+
     turno: yup
         .string()
         .required('turno is required')
@@ -147,6 +137,11 @@ const createAccidenteSchema = yup.object().shape({
 
 // Update accidente validation schema
 const updateAccidenteSchema = yup.object().shape({
+    empleadoId: yup
+        .string()
+        .optional()
+        .uuid('empleadoId must be a valid UUID'),
+    
     fechaAccidente: yup
         .date()
         .optional()
@@ -168,16 +163,6 @@ const updateAccidenteSchema = yup.object().shape({
         .string()
         .optional()
         .oneOf(VALID_TIPOS_ACCIDENTE, `tipoAccidente must be one of: ${VALID_TIPOS_ACCIDENTE.join(', ')}`),
-    
-    areaId: yup
-        .string()
-        .optional()
-        .uuid('areaId must be a valid UUID'),
-    
-    cargoId: yup
-        .string()
-        .optional()
-        .uuid('cargoId must be a valid UUID'),
     
     turno: yup
         .string()
@@ -319,11 +304,6 @@ const filterValidationSchema = yup.object().shape({
         .string()
         .optional()
         .oneOf(VALID_TIPOS_ACCIDENTE, `tipoAccidente must be one of: ${VALID_TIPOS_ACCIDENTE.join(', ')}`),
-    
-    areaId: yup
-        .string()
-        .optional()
-        .uuid('areaId must be a valid UUID'),
     
     estado: yup
         .string()
